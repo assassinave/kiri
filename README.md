@@ -19,7 +19,7 @@ kiri isn't signed by Apple yet, so macOS asks you to confirm before it opens the
 
 ### 1. Move kiri to Applications
 
-1. If you downloaded a `.zip`, double-click it to unzip it.
+1. Download `kiri-<version>.zip` from the [latest release](https://github.com/assassinave/kiri/releases/latest) and double-click it to unzip it.
 2. Drag **kiri** into your **Applications** folder.
 
 Open it from Applications, not from Downloads. Some features (Relaunch and Launch at login) may not work from the Downloads folder.
