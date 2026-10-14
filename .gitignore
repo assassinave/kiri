@@ -1,0 +1,15 @@
+# Local working docs
+/APP_CONTEXT.md
+/FIRST_LAUNCH.md
+/CLAUDE.md
+
+# Build output
+/.build/
+/build/
+
+# Icon source art (already baked into Resources/AppIcon.icns and AppDelegate.menuBarIcon())
+/kiri.png
+/kiri.svg
+
+# macOS
+.DS_Store
