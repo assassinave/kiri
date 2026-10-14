@@ -20,6 +20,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let captureItem = NSMenuItem(title: "Capture Region", action: #selector(captureNow), keyEquivalent: "")
     private let showAllItem = NSMenuItem(title: "Show All", action: #selector(showAll), keyEquivalent: "")
     private let clearItem = NSMenuItem(title: "Clear All", action: #selector(clearAll), keyEquivalent: "")
+    /// Chrome's accessibility mode (see `ChromeAccessibility`); hidden unless Chrome has a window open.
+    private let chromeItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         shelf.onShowAll = { [weak self] in self?.grid.show() }
@@ -118,6 +120,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let permissions = NSMenuItem(title: "Permissions…", action: #selector(openPermissions), keyEquivalent: "")
         permissions.target = self
         menu.addItem(permissions)
+        chromeItem.target = self
+        chromeItem.isHidden = true
+        menu.addItem(chromeItem)
         menu.addItem(NSMenuItem(title: "Quit kiri", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
     }
@@ -129,7 +134,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         showAllItem.title = "Show All  (\(model.showAllHotkey.displayString))"
         showAllItem.isEnabled = model.isEnabled
         clearItem.isEnabled = !model.shots.isEmpty
+        // The check walks Chrome's accessibility tree, so it runs off the main thread and the item
+        // updates while the menu is open.
+        DispatchQueue.global(qos: .userInitiated).async {
+            let state = ChromeAccessibility.state()
+            DispatchQueue.main.async { self.updateChromeItem(state) }
+        }
     }
+
+    private func updateChromeItem(_ state: ChromeAccessibility.State) {
+        switch state {
+        case .on:
+            chromeItem.title = "Chrome Element Picking: On"
+            chromeItem.action = nil
+            chromeItem.isHidden = false
+        case .off:
+            chromeItem.title = "Chrome Element Picking: Off \u{2014} Turn On\u{2026}"
+            chromeItem.action = #selector(openChromeAccessibility)
+            chromeItem.isHidden = false
+        case .notRunning, .noWindows, .unknown:
+            chromeItem.isHidden = true
+        }
+    }
+
+    @objc private func openChromeAccessibility() { ChromeAccessibility.openSettingsPage() }
 
     @objc private func toggleEnabled() { model.isEnabled.toggle() }
     @objc private func showAll() { grid.show() }
@@ -152,9 +180,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc private func openPermissions() {
-        if permissionsWindow == nil {
-            let window = NSWindow(contentViewController: NSHostingController(rootView: PermissionsView()))
-            window.title = "kiri Permissions"
+        // Rebuilt when not showing, so it reopens on step 1.
+        if permissionsWindow?.isVisible != true {
+            let view = OnboardingView { [weak self] in self?.permissionsWindow?.close() }
+            let window = NSWindow(contentViewController: NSHostingController(rootView: view))
+            window.title = "Set Up kiri"
             window.styleMask = [.titled, .closable]
             window.isReleasedWhenClosed = false
             window.center()

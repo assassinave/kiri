@@ -100,8 +100,6 @@ struct PermissionsView: View {
                 Button("Relaunch kiri", action: Self.relaunch)
             }
         }
-        .padding(20)
-        .frame(width: 460)
         .onReceive(timer) { _ in granted = Self.currentStatus() }
     }
 

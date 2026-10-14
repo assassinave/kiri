@@ -59,7 +59,7 @@ kiri lives in the **menu bar** at the top of the screen, as a small **K** icon. 
 
 ### 4. Allow permissions
 
-The first time kiri opens, a **Permissions** window lists four permissions with a status for each. Click **Allow…** next to each one:
+The first time kiri opens, a **Set Up kiri** window lists four permissions with a status for each. Click **Allow…** next to each one:
 
 | Permission | What kiri uses it for | Do you need it? |
 |---|---|---|
@@ -73,6 +73,16 @@ The first time kiri opens, a **Permissions** window lists four permissions with 
 - Each status turns into a green check when it's allowed.
 
 **After allowing Screen Recording, click Relaunch kiri** at the bottom of the window. macOS often applies it only after the app restarts. If macOS offers **Quit & Reopen**, that does the same.
+
+Then click **Next**.
+
+**If you use Google Chrome:** to click a single element on a web page in Chrome, Chrome's own accessibility support has to be on. Safari doesn't need this. Other browsers built on Chrome (Edge, Brave, Arc) probably need the same setting, but kiri doesn't check them.
+
+1. Click **Open Chrome Accessibility**. Chrome opens its accessibility page.
+2. Turn on **Native accessibility API support** and **Web accessibility**.
+3. The status in kiri's window turns to **On**. Click **Done**.
+
+Chrome turns this off again whenever it restarts or updates. When it's off, the K menu shows **Chrome Element Picking: Off — Turn On…**; click it to open the same Chrome page. Dragging to select always works in Chrome, even when this is off.
 
 You can open this window again any time from the K menu: **Permissions…**
 
@@ -93,10 +103,13 @@ Both shortcuts can be changed in **Settings…** in the K menu.
 Double-click kiri in Applications once more, then check **System Settings → Privacy & Security** again right away.
 
 **Screen Recording is on in System Settings, but kiri still asks for it.**
-Click **Relaunch kiri** in the Permissions window. If that doesn't help, select kiri in the Screen Recording list, remove it with the **–** button, then click **Allow…** in kiri again.
+Click **Relaunch kiri** in the setup window (K menu → **Permissions…**). If that doesn't help, select kiri in the Screen Recording list, remove it with the **–** button, then click **Allow…** in kiri again.
 
 **macOS asks again later whether kiri can keep recording your screen.**
 Newer macOS versions do this from time to time for screen-capture apps. Click **Allow** to keep using kiri.
+
+**In Chrome, kiri highlights the whole page instead of single elements.**
+Chrome's accessibility support is off, which happens after every Chrome restart or update. Click **Chrome Element Picking: Off — Turn On…** in the K menu, then turn on **Native accessibility API support** and **Web accessibility**.
 
 **The screen is dimmed and I can't get out.**
 Press **Esc**, right-click, or double-click.
@@ -106,7 +119,9 @@ On a crowded menu bar, icons can be hidden behind the notch. Quit some menu bar 
 
 ## Updating
 
-Quit kiri from the K menu (**Quit kiri**), then replace the old copy in Applications with the new one. You may need to do step 2 again for a new download, and macOS may ask for some permissions again.
+Quit kiri from the K menu (**Quit kiri**), then replace the old copy in Applications with the new one. You may need to do step 2 again for a new download.
+
+kiri isn't signed by Apple, so macOS treats each new version as a different app: **allow the permissions again after every update.** The old switches in System Settings may still look on but no longer apply. If kiri asks for a permission that already looks on, select kiri in that list, remove it with the **–** button, then click **Allow…** in kiri again.
 
 ## Privacy
 
@@ -115,10 +130,11 @@ Quit kiri from the K menu (**Quit kiri**), then replace the old copy in Applicat
 
 ## Using kiri with Claude Code
 
-`skills/kiri` is a Claude Code skill (`/kiri`) that reads the captures and notes on kiri's shelf and makes the changes the notes ask for in the current project. Install it by linking the folder into your skills directory:
+`skills/kiri` is a Claude Code skill (`/kiri`) that reads the captures and notes on kiri's shelf and makes the changes the notes ask for in the current project. It isn't in the app download. Clone this repo, then link the folder into your skills directory:
 
 ```sh
-ln -s "$(pwd)/skills/kiri" ~/.claude/skills/kiri
+git clone https://github.com/assassinave/kiri.git
+ln -s "$(pwd)/kiri/skills/kiri" ~/.claude/skills/kiri
 ```
 
 ## Building from source
