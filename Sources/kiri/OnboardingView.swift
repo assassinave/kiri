@@ -41,14 +41,19 @@ private struct ChromeStepView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("1. Click **Open Chrome Accessibility** below.")
                 Text("2. Turn on **Native accessibility API support** and **Web accessibility**.")
+                Text("3. Leave that tab open. Pinning it keeps it out of the way.")
             }
-            Text("Chrome turns this off whenever it restarts or updates. The kiri menu shows when it's off.")
+            Text("Chrome turns this off as soon as that tab is closed, and whenever Chrome restarts or updates. The kiri menu shows when it's off.")
                 .font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Text("Or click **Relaunch Chrome** to keep it on with no tab open, until you next quit Chrome yourself.")
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 10) {
                 statusLabel
                 Spacer()
                 Button("Open Chrome Accessibility", action: ChromeAccessibility.openSettingsPage)
+                    .disabled(!ChromeAccessibility.isInstalled)
+                Button("Relaunch Chrome", action: ChromeAccessibility.relaunchWithAccessibility)
                     .disabled(!ChromeAccessibility.isInstalled)
             }
         }

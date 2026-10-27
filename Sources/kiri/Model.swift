@@ -7,9 +7,9 @@ struct Shot: Identifiable {
     let cgImage: CGImage
     let image: NSImage          // sized in points
     let date = Date()
-    /// Context dictated or typed in the show-all grid; copied along with the image.
+    /// Context dictated or typed in the collection's sidebar; copied along with the image.
     var note = ""
-    /// Pinned comments from the grid's comment mode, in the order they were added.
+    /// Pinned comments from the collection's comment mode, in the order they were added.
     var comments: [Comment] = []
 
     init(cgImage: CGImage, scale: CGFloat) {
@@ -18,13 +18,22 @@ struct Shot: Identifiable {
                              size: NSSize(width: CGFloat(cgImage.width) / scale,
                                           height: CGFloat(cgImage.height) / scale))
     }
+
+    /// The note plus each non-empty comment (numbered like its pin, with the pixel it points at),
+    /// trimmed; what gets copied and exported alongside the image.
+    var context: String {
+        let comments = comments.enumerated().filter { !$1.isEmpty }.map { i, c in
+            let x = Int(c.point.x * CGFloat(cgImage.width)), y = Int(c.point.y * CGFloat(cgImage.height))
+            return "Comment \(i + 1) at (\(x), \(y)) px: \(c.text.trimmingCharacters(in: .whitespacesAndNewlines))"
+        }
+        return ([note.trimmingCharacters(in: .whitespacesAndNewlines)] + comments)
+            .filter { !$0.isEmpty }.joined(separator: "\n")
+    }
 }
 
-/// A comment pinned to a point on a capture in the grid's comment mode (C).
+/// A comment pinned to a point on a capture in the collection's comment mode (C).
 struct Comment: Identifiable {
     let id = UUID()
-    /// Creation order across every capture; comments are numbered 1, 2, 3… by it.
-    let seq: Int
     /// Where the pin points, as a fraction of the image's width and height from its top-left.
     let point: CGPoint
     var text = ""
@@ -94,13 +103,10 @@ final class AppModel: ObservableObject {
     }
     func clear() { shots.removeAll() }
 
-    private var commentSeq = 0
-
     /// Adds an empty comment pinned at `point` (0–1 of the image) and returns its id.
     func addComment(to shotID: UUID, at point: CGPoint) -> UUID? {
         guard let i = shots.firstIndex(where: { $0.id == shotID }) else { return nil }
-        commentSeq += 1
-        let comment = Comment(seq: commentSeq, point: point)
+        let comment = Comment(point: point)
         shots[i].comments.append(comment)
         return comment.id
     }
@@ -118,6 +124,12 @@ final class AppModel: ObservableObject {
         }
     }
 
+    func removeComment(_ id: UUID) {
+        for i in shots.indices where shots[i].comments.contains(where: { $0.id == id }) {
+            shots[i].comments.removeAll { $0.id == id }
+        }
+    }
+
     /// Drops comments left empty, except those still being edited.
     func removeEmptyComments(keeping keep: Set<UUID>) {
         for i in shots.indices where shots[i].comments.contains(where: { $0.isEmpty && !keep.contains($0.id) }) {
@@ -125,10 +137,9 @@ final class AppModel: ObservableObject {
         }
     }
 
-    /// Each comment's number: 1, 2, 3… in creation order across every capture, closing gaps left by
+    /// Each comment's number: 1, 2, 3… in creation order within its capture, closing gaps left by
     /// removed comments.
     var commentNumbers: [UUID: Int] {
-        let all = shots.flatMap(\.comments).sorted { $0.seq < $1.seq }
-        return Dictionary(uniqueKeysWithValues: all.enumerated().map { ($1.id, $0 + 1) })
+        Dictionary(uniqueKeysWithValues: shots.flatMap { $0.comments.enumerated().map { ($1.id, $0 + 1) } })
     }
 }

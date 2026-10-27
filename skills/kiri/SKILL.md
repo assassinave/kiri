@@ -19,8 +19,10 @@ frozen snapshot to `<per-user temp dir>/kiri/<yyyy-MM-ddTHHmmss>/` (UTC timestam
 layout.
 
 `kiri-notes.md` has one `## kiri-N.png` section per capture with a note. The note is what
-the user typed or dictated about that capture, usually the change they want. Captures
-without a note have no section.
+the user typed or dictated about that capture, usually the change they want. It may be
+followed by lines like `Comment 2 at (512, 300) px: make this red`: a comment the user
+pinned at that pixel of the PNG (from its top-left), about that spot. Captures with
+neither a note nor comments have no section.
 
 ## 1. Find the captures
 

@@ -31,6 +31,7 @@ cp "$BIN" "$APP/Contents/MacOS/kiri"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 cp -R Resources/Sounds "$APP/Contents/Resources/Sounds"
+cp -R Resources/Fonts "$APP/Contents/Resources/Fonts"
 
 codesign --force --sign "$IDENTITY" --identifier "$BUNDLE_ID" "$APP"
 echo "Built $APP (signed: $([[ "$IDENTITY" == "-" ]] && echo ad-hoc || echo "$IDENTITY"))"

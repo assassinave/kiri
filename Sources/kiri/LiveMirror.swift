@@ -23,7 +23,7 @@ final class LiveMirror {
     }
 
     func sync(_ shots: [Shot]) {
-        let items = shots.map { (id: $0.id, image: $0.cgImage, note: $0.note) }
+        let items = shots.map { (id: $0.id, image: $0.cgImage, note: $0.context) }
         queue.async { [self] in write(items) }
     }
 

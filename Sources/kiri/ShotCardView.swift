@@ -13,20 +13,12 @@ struct ShotCardView: View {
     let size: CGSize
     let cornerRadius: CGFloat
     let hovered: Bool
-    /// Shelf edge the card lifts away from on hover; nil (grid) means no lift.
+    /// Shelf edge the card lifts away from on hover; nil (the collection's preview) means no lift.
     let edge: ShelfEdge?
     static let defaultHoverScale: CGFloat = 1.04
-    /// How much the card grows on hover (the grid's enlarged capture doesn't).
+    /// How much the card grows on hover (the collection's preview doesn't).
     var hoverScale: CGFloat = defaultHoverScale
-    /// Border color while the card is marked (the grid's capture whose note is active); "Copied" wins.
-    var highlight: Color? = nil
-    /// Drawn in the bottom-right corner inside the card, so it shares the card's hover area, scale and
-    /// clipping (the grid's note button). The caller decides when it's visible.
-    var accessory: AnyView? = nil
-    /// False when the caller draws × and the accessory itself (a grid tile too small
-    /// to hold them; see `GridLayout.Tile.compact`).
-    var showsControls = true
-    /// False hides × (the grid's comment mode, where a click pins a comment instead).
+    /// False hides × (the collection's comment mode, where a click pins a comment instead).
     var showsClose = true
     let onClose: () -> Void
 
@@ -63,7 +55,7 @@ struct ShotCardView: View {
                 .frame(width: size.width, height: size.height)
                 .clipped()
 
-            if hovered && !copied && showsControls && showsClose {
+            if hovered && !copied && showsClose {
                 Self.closeButton(action: onClose)
                     .padding(6)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -85,17 +77,11 @@ struct ShotCardView: View {
                     .transition(.scale(scale: 0.4).combined(with: .opacity))
                 }
             }
-
-            if let accessory, showsControls {
-                accessory
-                    .padding(6)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            }
         }
         .frame(width: size.width, height: size.height)
         .clipShape(shape)
-        .overlay(shape.strokeBorder(copied ? Color(red: 0.19, green: 0.82, blue: 0.35) : highlight ?? Self.borderColor,
-                                    lineWidth: copied || highlight != nil ? 2.5 : 2))
+        .overlay(shape.strokeBorder(copied ? Color(red: 0.19, green: 0.82, blue: 0.35) : Self.borderColor,
+                                    lineWidth: copied ? 2.5 : 2))
         .shadow(color: .black.opacity(hovered ? 0.45 : 0.35), radius: hovered ? 10 : 6, y: hovered ? 5 : 3)
         .scaleEffect(hovered ? hoverScale : 1)
         .offset(hovered ? lift : .zero)

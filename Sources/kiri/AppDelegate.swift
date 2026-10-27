@@ -149,15 +149,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             chromeItem.action = nil
             chromeItem.isHidden = false
         case .off:
-            chromeItem.title = "Chrome Element Picking: Off \u{2014} Turn On\u{2026}"
-            chromeItem.action = #selector(openChromeAccessibility)
+            chromeItem.title = "Chrome Element Picking: Off \u{2014} Relaunch Chrome\u{2026}"
+            chromeItem.action = #selector(relaunchChrome)
             chromeItem.isHidden = false
         case .notRunning, .noWindows, .unknown:
             chromeItem.isHidden = true
         }
     }
 
-    @objc private func openChromeAccessibility() { ChromeAccessibility.openSettingsPage() }
+    @objc private func relaunchChrome() { ChromeAccessibility.relaunchWithAccessibility() }
 
     @objc private func toggleEnabled() { model.isEnabled.toggle() }
     @objc private func showAll() { grid.show() }

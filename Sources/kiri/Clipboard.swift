@@ -8,7 +8,7 @@ enum Clipboard {
         let pb = NSPasteboard.general
         pb.clearContents()
         // The note rides along as text; the pasting app picks the type it wants.
-        let note = shot.note.trimmingCharacters(in: .whitespacesAndNewlines)
+        let note = shot.context
         pb.declareTypes(note.isEmpty ? [.png, .tiff] : [.png, .tiff, .string], owner: nil)
         let okPNG = pb.setData(png, forType: .png)
         let okTIFF = rep.tiffRepresentation.map { pb.setData($0, forType: .tiff) } ?? false
@@ -74,7 +74,7 @@ enum Clipboard {
     }
 
     private static func trimmedNotes(_ shots: [Shot]) -> [String] {
-        shots.map { $0.note.trimmingCharacters(in: .whitespacesAndNewlines) }
+        shots.map(\.context)
     }
 
     /// One section per capture that has a note, titled with its PNG's file name.

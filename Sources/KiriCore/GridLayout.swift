@@ -36,8 +36,9 @@ public enum GridLayout {
 
     /// - Parameters:
     ///   - sizes: natural sizes of the captures, in points, in display order.
-    ///   - size: the full area the grid is shown in (padding is subtracted here).
-    public static func arrange(_ sizes: [CGSize], in size: CGSize) -> Arrangement {
+    ///   - size: the full area the grid is shown in.
+    ///   - padding: subtracted from each side of `size`.
+    public static func arrange(_ sizes: [CGSize], in size: CGSize, padding: CGFloat = GridLayout.padding) -> Arrangement {
         let width = max(1, size.width - 2 * padding)
         let height = max(1, size.height - 2 * padding)
         var last = Arrangement(tiles: [], contentSize: .zero)
@@ -92,5 +93,13 @@ public enum GridLayout {
         }
         let contentHeight = rows.isEmpty ? 0 : y - spacing
         return Arrangement(tiles: tiles.compactMap { $0 }, contentSize: CGSize(width: contentWidth, height: contentHeight))
+    }
+
+    /// A tile's slot: the image, plus the control bar below it when the image is too small to hold them.
+    static func slot(for image: CGSize) -> (slot: CGSize, compact: Bool) {
+        let compact = image.width < minInlineSize.width || image.height < minInlineSize.height
+        return compact
+            ? (CGSize(width: max(image.width, barMinWidth), height: image.height + barGap + barHeight), true)
+            : (image, false)
     }
 }

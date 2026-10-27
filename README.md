@@ -80,9 +80,14 @@ Then click **Next**.
 
 1. Click **Open Chrome Accessibility**. Chrome opens its accessibility page.
 2. Turn on **Native accessibility API support** and **Web accessibility**.
-3. The status in kiri's window turns to **On**. Click **Done**.
+3. **Leave that Chrome tab open.** Pin it (right-click the tab → **Pin**) to keep it out of the way.
+4. The status in kiri's window turns to **On**. Click **Done**.
 
-Chrome turns this off again whenever it restarts or updates. When it's off, the K menu shows **Chrome Element Picking: Off — Turn On…**; click it to open the same Chrome page. Dragging to select always works in Chrome, even when this is off.
+Chrome turns this off again as soon as that tab is closed, and whenever Chrome restarts or updates.
+
+**To keep it on without the tab:** click **Relaunch Chrome** instead. kiri asks first, then quits Chrome and reopens it with element picking on. Your tabs come back only if Chrome is set to **Continue where you left off** (Chrome Settings → On startup). It stays on until you quit Chrome yourself.
+
+When it's off, the K menu shows **Chrome Element Picking: Off — Relaunch Chrome…**; click it to relaunch Chrome the same way. Dragging to select always works in Chrome, even when this is off.
 
 You can open this window again any time from the K menu: **Permissions…**
 
@@ -109,7 +114,7 @@ Click **Relaunch kiri** in the setup window (K menu → **Permissions…**). If 
 Newer macOS versions do this from time to time for screen-capture apps. Click **Allow** to keep using kiri.
 
 **In Chrome, kiri highlights the whole page instead of single elements.**
-Chrome's accessibility support is off, which happens after every Chrome restart or update. Click **Chrome Element Picking: Off — Turn On…** in the K menu, then turn on **Native accessibility API support** and **Web accessibility**.
+Chrome's accessibility support is off, which happens when the `chrome://accessibility` tab is closed and after every Chrome restart or update. Click **Chrome Element Picking: Off — Relaunch Chrome…** in the K menu. Or open `chrome://accessibility`, turn on **Native accessibility API support** and **Web accessibility**, and leave that tab open.
 
 **The screen is dimmed and I can't get out.**
 Press **Esc**, right-click, or double-click.
