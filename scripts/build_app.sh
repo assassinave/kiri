@@ -33,7 +33,13 @@ cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 cp -R Resources/Sounds "$APP/Contents/Resources/Sounds"
 cp -R Resources/Fonts "$APP/Contents/Resources/Fonts"
 
-codesign --force --sign "$IDENTITY" --identifier "$BUNDLE_ID" "$APP"
+if [[ "$IDENTITY" == "-" ]]; then
+    codesign --force --sign - --identifier "$BUNDLE_ID" "$APP"
+else
+    # Hardened runtime + secure timestamp: required for notarization with a Developer ID certificate.
+    codesign --force --sign "$IDENTITY" --identifier "$BUNDLE_ID" \
+        --options runtime --timestamp --entitlements Resources/kiri.entitlements "$APP"
+fi
 echo "Built $APP (signed: $([[ "$IDENTITY" == "-" ]] && echo ad-hoc || echo "$IDENTITY"))"
 
 if [[ "$IDENTITY" == "-" && "${KIRI_KEEP_TCC:-0}" != "1" ]]; then
